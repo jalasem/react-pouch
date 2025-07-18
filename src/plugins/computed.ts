@@ -1,0 +1,16 @@
+import type { Plugin, Pouch } from "../core/types";
+
+export function computed<T, C>(computeFn: (value: T) => C): Plugin<T> {
+  let computedValue: C;
+
+  return {
+    setup(pouch: Pouch<T>) {
+      computedValue = computeFn(pouch.get());
+      (pouch as any).computed = () => computedValue;
+    },
+
+    onSet(newValue: T): void {
+      computedValue = computeFn(newValue);
+    },
+  };
+}
