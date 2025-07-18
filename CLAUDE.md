@@ -56,3 +56,11 @@ Plugins implement the `PluginHooks<T>` interface with three optional methods:
 - Rollup builds multiple formats (CJS, ESM) with TypeScript declarations
 - ESLint for code quality with React-specific rules
 - React 16.8+ peer dependency requirement (React Native supported)
+
+## Publishing Workflow
+
+- After every fix and change confirm if you should update the package, if I say yes, do the following:
+  1. Test the package and ensure everything works
+  2. Bump up the version number
+  3. Stage & commit changes then push to github
+  4. Publish to npm. Remember to ask for OTP code when you're about to publish to npm
