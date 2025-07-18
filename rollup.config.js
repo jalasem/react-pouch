@@ -26,7 +26,11 @@ export default [
     plugins: [
       resolve(),
       commonjs(),
-      typescript({ tsconfig: "./tsconfig.json" }),
+      typescript({ 
+        tsconfig: "./tsconfig.json",
+        declaration: false,
+        declarationMap: false 
+      }),
       babel({
         babelHelpers: "bundled",
         presets: ["@babel/preset-env", "@babel/preset-react"],
