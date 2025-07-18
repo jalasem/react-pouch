@@ -1,6 +1,6 @@
 {
   "name": "react-pouch",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "The simplest state management library ever. No providers, no flux, no context hell. Just plug-and-play state for React & React Native with 100% test coverage.",
   "type": "module",
   "main": "dist/index.js",
