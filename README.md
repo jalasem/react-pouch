@@ -81,7 +81,7 @@ pnpm add react-pouch
 import { pouch } from "react-pouch";
 
 // 🎉 That's it! No providers, no setup, no complexity
-const counterPouch = pouch(0);
+export const counterPouch = pouch(0);
 ```
 
 ### ⚡ Define Actions
@@ -107,6 +107,9 @@ console.log(counterPouch.get()); // 1
 
 ```typescript
 // 👂 Subscribe to changes - automatic cleanup included
+import { counterPouch } from "./path/to/your/pouch";
+
+// 👂 Subscribe to changes - automatic cleanup included
 const unsubscribe = counterPouch.subscribe(() => {
   console.log(`🔔 Counter changed to ${counterPouch.get()}`);
 });
@@ -123,6 +126,11 @@ unsubscribe();
 
 ```typescript
 // ⚛️ No providers needed! Just use the pouch directly
+import React from "react";
+import { counterPouch } from "./path/to/your/pouch";
+import { increment, decrement, reset, setCount } from "./path/to/your/actions";
+
+// ⚛️ No providers needed! Just use the pouch directly
 function Counter() {
   const count = counterPouch.use(); // ✨ Magic happens here
 
@@ -138,9 +146,13 @@ function Counter() {
     </div>
   );
 }
+```
 
+### 🔧 Create a Custom Hook
+
+```typescript
 // Or create a custom hook for better organization
-function useCounter() {
+export function useCounter() {
   const count = counterPouch.use();
 
   return {
@@ -151,6 +163,13 @@ function useCounter() {
     setCount,
   };
 }
+```
+
+### 🔧 Use the Custom Hook
+
+```typescript
+import React from "react";
+import { useCounter } from "./path/to/your/counter";
 
 // Use the custom hook
 function CounterWithHook() {
@@ -176,6 +195,9 @@ function CounterWithHook() {
 Creates a new pouch instance with optional plugins.
 
 ```typescript
+// 🎯 Basic pouch - just works!
+import { pouch } from "react-pouch";
+
 // 🎯 Basic pouch - just works!
 const myPouch = pouch(initialValue);
 
@@ -214,16 +236,16 @@ interface AppState {
   isLoading: boolean;
 }
 
-const appPouch = pouch<AppState>({
+export const appPouch = pouch<AppState>({
   counter: 0,
   message: "Hello World",
   isLoading: false,
 });
 
 // Individual pouches for different concerns
-const userPouch = pouch({ name: "John", age: 30 });
-const todosPouch = pouch<Todo[]>([]);
-const configPouch = pouch({ theme: "dark", language: "en" });
+export const userPouch = pouch({ name: "John", age: 30 });
+export const todosPouch = pouch<Todo[]>([]);
+export const configPouch = pouch({ theme: "dark", language: "en" });
 ```
 
 #### 🔧 Core Pouch Methods
@@ -231,6 +253,8 @@ const configPouch = pouch({ theme: "dark", language: "en" });
 **📖 get() - Reading Values**
 
 ```typescript
+import { appPouch, userPouch } from "./path/to/your/pouches";
+
 const currentState = appPouch.get();
 const currentUser = userPouch.get();
 console.log("Current app state:", currentState);
@@ -239,6 +263,8 @@ console.log("Current app state:", currentState);
 **✏️ set() - Updating Values**
 
 ```typescript
+import { appPouch, userPouch, todosPouch } from "./path/to/your/pouches";
+
 // Direct value assignment
 appPouch.set({ counter: 5, message: "Updated!", isLoading: true });
 userPouch.set({ name: "Jane", age: 25 });
@@ -252,6 +278,8 @@ todosPouch.set((prev) => [...prev, { id: Date.now(), text: "New task" }]);
 **👂 subscribe() - Listening to Changes**
 
 ```typescript
+import { appPouch, userPouch } from "./path/to/your/pouches";
+
 // Subscribe to all changes
 const unsubscribe = appPouch.subscribe(() => {
   console.log("App state changed:", appPouch.get());
@@ -276,6 +304,9 @@ unsubscribe2();
 **⚛️ use() - React Integration**
 
 ```typescript
+import React from "react";
+import { userPouch, appPouch } from "./path/to/your/pouches";
+
 function UserProfile() {
   const user = userPouch.use();
   const appState = appPouch.use();
@@ -304,8 +335,10 @@ function UserProfile() {
 #### 🧮 Computed Values Pattern
 
 ```typescript
-const cartPouch = pouch([]);
-const pricePouch = pouch(0);
+import { pouch } from "react-pouch";
+
+export const cartPouch = pouch([]);
+export const pricePouch = pouch(0);
 
 // Manual computed values
 cartPouch.subscribe((items) => {
@@ -324,8 +357,10 @@ console.log(pricePouch.get()); // 17
 #### 🤝 Multiple Store Coordination
 
 ```typescript
-const authPouch = pouch(null);
-const permissionsPouch = pouch([]);
+import { pouch } from "react-pouch";
+
+export const authPouch = pouch(null);
+export const permissionsPouch = pouch([]);
 
 // Coordinate multiple stores
 authPouch.subscribe((user) => {
@@ -344,25 +379,27 @@ authPouch.subscribe((user) => {
 #### 🏭 Custom Store Factory
 
 ```typescript
-function createListPouch<T>(initialItems: T[] = []) {
-  const pouch = pouch(initialItems);
+import { pouch } from "react-pouch";
+
+export function createListPouch<T>(initialItems: T[] = []) {
+  const pouchInstance = pouch(initialItems);
 
   return {
-    ...pouch,
-    add: (item: T) => pouch.set((prev) => [...prev, item]),
+    ...pouchInstance,
+    add: (item: T) => pouchInstance.set((prev) => [...prev, item]),
     remove: (index: number) =>
-      pouch.set((prev) => prev.filter((_, i) => i !== index)),
+      pouchInstance.set((prev) => prev.filter((_, i) => i !== index)),
     update: (index: number, item: T) =>
-      pouch.set((prev) =>
+      pouchInstance.set((prev) =>
         prev.map((existing, i) => (i === index ? item : existing))
       ),
-    clear: () => pouch.set([]),
-    length: () => pouch.get().length,
+    clear: () => pouchInstance.set([]),
+    length: () => pouchInstance.get().length,
   };
 }
 
 // Usage
-const todoPouch = createListPouch([]);
+export const todoPouch = createListPouch([]);
 todoPouch.add({ id: 1, text: "Learn React Pouch", completed: false });
 todoPouch.update(0, { id: 1, text: "Learn React Pouch", completed: true });
 ```
@@ -427,7 +464,7 @@ interface CartState {
 }
 
 // Basic cart pouch
-const cartPouch = pouch<CartState>({
+export const cartPouch = pouch<CartState>({
   items: [],
   total: 0,
   itemCount: 0,
@@ -511,7 +548,7 @@ function ProductList() {
 import { pouch, persist, validate, history, logger } from "react-pouch";
 
 // Enhanced cart with plugins
-const enhancedCartPouch = pouch<CartState>(
+export const enhancedCartPouch = pouch<CartState>(
   {
     items: [],
     total: 0,
@@ -541,7 +578,7 @@ const enhancedCartPouch = pouch<CartState>(
 );
 
 // Enhanced cart operations with error handling
-const enhancedAddToCart = (product: Omit<CartItem, "quantity">) => {
+export const enhancedAddToCart = (product: Omit<CartItem, "quantity">) => {
   try {
     enhancedCartPouch.set((prev) => {
       const existingItem = prev.items.find((item) => item.id === product.id);
@@ -569,6 +606,9 @@ const enhancedAddToCart = (product: Omit<CartItem, "quantity">) => {
 };
 
 // Enhanced React components
+import React from "react";
+import { enhancedCartPouch, enhancedAddToCart } from "./path/to/your/cart";
+
 function EnhancedCart() {
   const cart = enhancedCartPouch.use();
 
@@ -576,7 +616,10 @@ function EnhancedCart() {
     <div className="cart">
       <h2>Shopping Cart</h2>
       {cart.items.map((item) => (
-        <div key={item.id} className="cart-item">
+        <div
+          key={item.id}
+          className="cart-item"
+        >
           <span>{item.name}</span>
           <span>Qty: {item.quantity}</span>
           <span>${(item.price * item.quantity).toFixed(2)}</span>
@@ -621,7 +664,7 @@ interface FormData {
   errors: Record<string, string>;
 }
 
-const formPouch = pouch<FormData>({
+export const formPouch = pouch<FormData>({
   personalInfo: {
     firstName: "",
     lastName: "",
@@ -696,7 +739,7 @@ import {
 } from "react-pouch";
 
 // Enhanced form with comprehensive plugin stack
-const enhancedFormPouch = pouch<FormData>(
+export const enhancedFormPouch = pouch<FormData>(
   {
     personalInfo: {
       firstName: "",
@@ -755,6 +798,9 @@ const enhancedFormPouch = pouch<FormData>(
     logger("FormStore"),
   ]
 );
+
+import React from "react";
+import { enhancedFormPouch } from "./path/to/your/formPouch";
 
 // React form component
 function EnhancedForm() {
@@ -827,10 +873,16 @@ function EnhancedForm() {
       </div>
 
       <div className="form-actions">
-        <button type="button" onClick={() => enhancedFormStore.undo()}>
+        <button
+          type="button"
+          onClick={() => enhancedFormStore.undo()}
+        >
           Undo
         </button>
-        <button type="button" onClick={() => enhancedFormStore.redo()}>
+        <button
+          type="button"
+          onClick={() => enhancedFormStore.redo()}
+        >
           Redo
         </button>
       </div>
@@ -863,7 +915,7 @@ interface DashboardData {
   isLoading: boolean;
 }
 
-const dashboardStore = store<DashboardData>({
+export const dashboardStore = store<DashboardData>({
   metrics: {
     totalUsers: 0,
     activeUsers: 0,
@@ -938,7 +990,7 @@ import {
 } from "react-pouch";
 
 // Enhanced dashboard with comprehensive plugin stack
-const enhancedDashboardStore = store<DashboardData>(
+export const enhancedDashboardStore = store<DashboardData>(
   {
     metrics: {
       totalUsers: 0,
@@ -1050,7 +1102,10 @@ function DashboardChart() {
       <h3>Performance Chart</h3>
       <div className="chart">
         {dashboard.chartData.labels.map((label, index) => (
-          <div key={label} className="chart-bar">
+          <div
+            key={label}
+            className="chart-bar"
+          >
             <div
               className="bar"
               style={{ height: `${dashboard.chartData.values[index]}%` }}
@@ -1124,6 +1179,9 @@ function EnhancedDashboard() {
 **Basic pouch too simple?** Add superpowers with plugins:
 
 ```typescript
+// 🎯 Basic pouch
+import { pouch } from "react-pouch";
+
 // 🎯 Basic pouch
 const simple = pouch(0);
 
@@ -1455,7 +1513,7 @@ console.log(textStore.get()); // "HELLO WORLD"
 ```typescript
 import { store, validate, persist, history, logger } from "react-pouch";
 
-const formStore = store({ name: "", email: "", age: 0 }, [
+export const formStore = store({ name: "", email: "", age: 0 }, [
   validate((data) => {
     if (!data.name) return { isValid: false, error: "Name is required" };
     if (!data.email.includes("@"))
@@ -1476,7 +1534,7 @@ const formStore = store({ name: "", email: "", age: 0 }, [
 ```typescript
 import { store, sync, debounce, encrypt, logger } from "react-pouch";
 
-const secureNotesStore = store("", [
+export const secureNotesStore = store("", [
   encrypt("my-secret-key"),
   debounce(1000),
   sync("https://api.example.com/notes", {
@@ -1494,7 +1552,7 @@ const secureNotesStore = store("", [
 ```typescript
 import { store, throttle, analytics, computed, logger } from "react-pouch";
 
-const searchStore = store({ query: "", results: [] }, [
+export const searchStore = store({ query: "", results: [] }, [
   throttle(300),
   computed((state) => state.results.length),
   analytics("search", {
@@ -1614,7 +1672,7 @@ interface User {
   email: string;
 }
 
-const userStore = store<User>({
+export const userStore = store<User>({
   id: 1,
   name: "John",
   email: "john@example.com",
@@ -1646,7 +1704,9 @@ function UserProfile() {
 ### 🔗 Custom Hook Pattern
 
 ```typescript
-function useCounter() {
+import { store } from "react-pouch";
+
+export function useCounter() {
   const counterStore = store(0, [persist("counter"), history(10)]);
 
   const count = counterStore.use();
