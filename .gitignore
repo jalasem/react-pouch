@@ -43,18 +43,18 @@ desktop.ini
 .env.test.local
 .env.production.local
 
-# Claude-related files
-.claude/
-*.claude
-CLAUDE.md
-*.claude.json
-*.claude.yaml
-*.claude.yml
-claude-artifacts/
-.claude-session
-.claude-cache/
-.claude.sig
-*.sig
+# Claude-related files (now tracked)
+# .claude/
+# *.claude
+# CLAUDE.md
+# *.claude.json
+# *.claude.yaml
+# *.claude.yml
+# claude-artifacts/
+# .claude-session
+# .claude-cache/
+# .claude.sig
+# *.sig
 
 # Temporary files
 *.tmp
