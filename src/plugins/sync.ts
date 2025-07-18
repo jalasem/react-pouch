@@ -4,9 +4,9 @@ interface SyncOptions {
   debounce?: number;
   onError?: (error: Error) => void;
   headers?: Record<string, string>;
-  credentials?: RequestCredentials;
+  credentials?: "include" | "omit" | "same-origin";
   method?: string;
-  mode?: RequestMode;
+  mode?: "cors" | "no-cors" | "same-origin";
   [key: string]: any;
 }
 

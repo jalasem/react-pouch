@@ -90,6 +90,6 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/jalasem/react-pouch.git"
+    "url": "git+https://github.com/jalasem/react-pouch.git"
   }
 }
