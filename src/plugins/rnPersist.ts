@@ -34,7 +34,9 @@ export function rnPersist<T>(key: string, options: RNPersistOptions = {}): Plugi
   let AsyncStorage = asyncStorage;
   if (!AsyncStorage) {
     try {
-      AsyncStorage = require('@react-native-async-storage/async-storage').default;
+      // Use dynamic import to avoid bundler dependency resolution
+      const packageName = '@react-native-async-storage/async-storage';
+      AsyncStorage = eval(`require('${packageName}')`).default;
     } catch (error) {
       // AsyncStorage not available, plugin will be disabled
       console.warn('rnPersist: AsyncStorage not available. Install @react-native-async-storage/async-storage or provide asyncStorage option.');
