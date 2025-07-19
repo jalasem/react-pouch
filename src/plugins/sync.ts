@@ -1,4 +1,4 @@
-import type { Plugin } from "../core/types";
+import type { SimplePlugin } from "../core/types";
 
 interface SyncOptions {
   debounce?: number;
@@ -10,7 +10,7 @@ interface SyncOptions {
   [key: string]: any;
 }
 
-export function sync<T>(url: string, options: SyncOptions = {}): Plugin<T> {
+export function sync<T>(url: string, options: SyncOptions = {}): SimplePlugin<T> {
   const { debounce = 500, onError = console.error, headers = {}, ...fetchOptions } = options;
   let timeout: ReturnType<typeof setTimeout>;
 

@@ -1,4 +1,4 @@
-import type { Plugin } from "../core/types";
+import type { SimplePlugin } from "../core/types";
 
 // Simple XOR encryption for demo - use proper encryption in production!
 function simpleEncrypt(text: string, key: string): string {
@@ -21,7 +21,7 @@ function simpleDecrypt(encrypted: string, key: string): string {
     .join("");
 }
 
-export function encrypt<T>(secretKey: string): Plugin<T> {
+export function encrypt<T>(secretKey: string): SimplePlugin<T> {
   const PREFIX = "encrypted:";
 
   return {

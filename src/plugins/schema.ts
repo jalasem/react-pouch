@@ -1,4 +1,4 @@
-import type { Plugin } from "../core/types";
+import type { SimplePlugin } from "../core/types";
 
 interface SchemaDefinition {
   [key: string]: string | SchemaDefinition;
@@ -32,7 +32,7 @@ function validateSchema(
   }
 }
 
-export function schema<T>(schemaDefinition: SchemaDefinition): Plugin<T> {
+export function schema<T>(schemaDefinition: SchemaDefinition): SimplePlugin<T> {
   return {
     onSet(newValue: T): void {
       validateSchema(newValue, schemaDefinition);

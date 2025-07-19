@@ -1,4 +1,4 @@
-import type { Plugin } from "../core/types";
+import type { SimplePlugin } from "../core/types";
 
 interface PersistOptions {
   storage?: "localStorage" | "sessionStorage";
@@ -22,7 +22,7 @@ function safeStringify(obj: any): string {
 export function persist<T>(
   key: string,
   options: PersistOptions = {}
-): Plugin<T> {
+): SimplePlugin<T> {
   const {
     storage = "localStorage",
     serialize = safeStringify,

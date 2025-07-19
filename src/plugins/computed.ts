@@ -1,6 +1,11 @@
 import type { Plugin, Pouch } from "../core/types";
 
-export function computed<T, C>(computeFn: (value: T) => C): Plugin<T> {
+// Define the augmentation interface for the computed plugin
+export interface ComputedAugmentation<C> {
+  computed(): C;
+}
+
+export function computed<T, C>(computeFn: (value: T) => C): Plugin<T, ComputedAugmentation<C>> {
   let computedValue: C;
 
   return {

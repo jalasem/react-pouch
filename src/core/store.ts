@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
-import type { Pouch as PouchType, Plugin } from "./types";
+import type { Pouch as PouchType, Plugin, PouchWithPlugins } from "./types";
 
 class PouchImpl<T> implements PouchType<T> {
   private value: T;
   private listeners = new Set<() => void>();
-  private plugins: Plugin<T>[];
+  private plugins: Plugin<T, any>[];
 
-  constructor(initialValue: T, plugins: Plugin<T>[] = []) {
+  constructor(initialValue: T, plugins: Plugin<T, any>[] = []) {
     this.plugins = plugins;
     this.value = this.initializeWithPlugins(initialValue);
 
@@ -76,19 +76,31 @@ class PouchImpl<T> implements PouchType<T> {
   }
 }
 
+// Overloaded function signatures for type-safe plugin inference
+export function pouch<T>(initialValue: T): PouchType<T>;
+export function pouch<T, TPlugins extends readonly Plugin<T, any>[]>(
+  initialValue: T,
+  plugins: TPlugins
+): PouchWithPlugins<T, TPlugins>;
 export function pouch<T>(
   initialValue: T,
-  plugins: Plugin<T>[] = []
-): PouchType<T> {
-  return new PouchImpl(initialValue, plugins);
+  plugins?: Plugin<T, any>[]
+): any {
+  return new PouchImpl(initialValue, plugins || []);
 }
 
-// Keep store as an alias for backward compatibility
+// Keep store as an alias for backward compatibility with additional overload for explicit types
+export function store<T>(initialValue: T): PouchType<T>;
+export function store<T>(initialValue: T, plugins: Plugin<T, any>[]): PouchType<T>;
+export function store<T, TPlugins extends readonly Plugin<T, any>[]>(
+  initialValue: T,
+  plugins: TPlugins
+): PouchWithPlugins<T, TPlugins>;
 export function store<T>(
   initialValue: T,
-  plugins: Plugin<T>[] = []
-): PouchType<T> {
-  return pouch(initialValue, plugins);
+  plugins?: Plugin<T, any>[]
+): any {
+  return pouch(initialValue, plugins || []);
 }
 
 export function usePouch<T>(pouchInstance: PouchType<T>): T {

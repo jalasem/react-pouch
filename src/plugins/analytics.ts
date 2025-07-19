@@ -1,4 +1,4 @@
-import type { Plugin } from "../core/types";
+import type { SimplePlugin } from "../core/types";
 
 interface AnalyticsOptions {
   trackInitial?: boolean;
@@ -9,7 +9,7 @@ interface AnalyticsOptions {
 export function analytics<T>(
   eventName: string,
   options: AnalyticsOptions = {}
-): Plugin<T> {
+): SimplePlugin<T> {
   const {
     trackInitial = false,
     includeTimestamp = true,

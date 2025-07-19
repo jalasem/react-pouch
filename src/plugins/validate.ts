@@ -1,8 +1,8 @@
-import type { Plugin } from "../core/types";
+import type { SimplePlugin } from "../core/types";
 
 type Validator<T> = (value: T) => { isValid: boolean; error?: string };
 
-export function validate<T>(validator: Validator<T>): Plugin<T> {
+export function validate<T>(validator: Validator<T>): SimplePlugin<T> {
   return {
     setup(pouch) {
       const originalSet = pouch.set.bind(pouch);

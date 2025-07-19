@@ -1,8 +1,8 @@
-import type { Plugin, Store } from "../core/types";
+import type { SimplePlugin, Store } from "../core/types";
 
 type Middleware<T> = (value: T, oldValue: T) => T;
 
-export function middleware<T>(...middlewares: Middleware<T>[]): Plugin<T> {
+export function middleware<T>(...middlewares: Middleware<T>[]): SimplePlugin<T> {
   return {
     setup(store: Store<T>) {
       const originalSet = store.set.bind(store);

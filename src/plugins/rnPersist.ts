@@ -1,5 +1,15 @@
 import type { Plugin } from "../core/types";
 
+// Define the augmentation interface for the rnPersist plugin
+export interface RNPersistAugmentation {
+  getStorageInfo(): {
+    key: string;
+    available: boolean;
+    type: string;
+  };
+  clearStorage(): Promise<void>;
+}
+
 interface RNPersistOptions {
   serialize?: (value: any) => string;
   deserialize?: (str: string) => any;
@@ -23,7 +33,7 @@ function safeStringify(obj: any): string {
   });
 }
 
-export function rnPersist<T>(key: string, options: RNPersistOptions = {}): Plugin<T> {
+export function rnPersist<T>(key: string, options: RNPersistOptions = {}): Plugin<T, RNPersistAugmentation> {
   const {
     serialize = safeStringify,
     deserialize = JSON.parse,

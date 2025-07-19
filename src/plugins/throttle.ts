@@ -1,6 +1,6 @@
-import type { Plugin, Pouch } from "../core/types";
+import type { SimplePlugin, Pouch } from "../core/types";
 
-export function throttle<T>(ms: number): Plugin<T> {
+export function throttle<T>(ms: number): SimplePlugin<T> {
   let lastCall = 0;
   let pendingValue: T | undefined;
   let timeout: ReturnType<typeof setTimeout>;

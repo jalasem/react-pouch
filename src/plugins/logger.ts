@@ -1,4 +1,4 @@
-import type { Plugin } from "../core/types";
+import type { SimplePlugin } from "../core/types";
 
 interface LoggerOptions {
   collapsed?: boolean;
@@ -8,7 +8,7 @@ interface LoggerOptions {
 export function logger<T>(
   name: string,
   options: LoggerOptions = {}
-): Plugin<T> {
+): SimplePlugin<T> {
   const { collapsed = false, timestamp = true } = options;
 
   return {

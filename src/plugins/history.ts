@@ -1,5 +1,17 @@
 import type { Plugin, Pouch } from "../core/types";
 
+// Define the augmentation interface for the history plugin
+export interface HistoryAugmentation<T> {
+  undo(): void;
+  redo(): void;
+  canUndo(): boolean;
+  canRedo(): boolean;
+  history: {
+    past: T[];
+    future: T[];
+  };
+}
+
 interface HistoryPouch<T> extends Pouch<T> {
   undo(): void;
   redo(): void;
@@ -11,7 +23,7 @@ interface HistoryPouch<T> extends Pouch<T> {
   };
 }
 
-export function history<T>(maxSize: number = 10): Plugin<T> {
+export function history<T>(maxSize: number = 10): Plugin<T, HistoryAugmentation<T>> {
   const past: T[] = [];
   const future: T[] = [];
   let isUndoRedoing = false;

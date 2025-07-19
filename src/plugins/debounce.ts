@@ -1,6 +1,6 @@
-import type { Plugin, Pouch } from "../core/types";
+import type { SimplePlugin, Pouch } from "../core/types";
 
-export function debounce<T>(ms: number): Plugin<T> {
+export function debounce<T>(ms: number): SimplePlugin<T> {
   let timeout: ReturnType<typeof setTimeout>;
 
   return {
