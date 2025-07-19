@@ -75,56 +75,34 @@ pnpm add react-pouch
 
 ## 🚀 Quick Start
 
-### 🎯 Initialize Your Pouch
+### 🗂️ Step 1: Create Your Store
 
+Create a dedicated file for your state management:
+
+**`src/stores/counterStore.ts`**
 ```typescript
 import { pouch } from "react-pouch";
 
-// 🎉 That's it! No providers, no setup, no complexity
-const counterPouch = pouch(0);
+// 🎯 Create the pouch - your state container
+export const counterPouch = pouch(0);
+
+// ⚡ Export actions for easy reuse
+export const increment = (by = 1) => counterPouch.set((prev) => prev + by);
+export const decrement = (by = 1) => counterPouch.set((prev) => prev - by);
+export const reset = () => counterPouch.set(0);
+export const setCount = (value: number) => counterPouch.set(value);
 ```
 
-### ⚡ Define Actions
+### ⚛️ Step 2: Use in React Components
 
+Import and use your store in any component:
+
+**`src/components/Counter.tsx`**
 ```typescript
-// ⚡ Counter actions
-const increment = (by = 1) => counterPouch.set((prev) => prev + by);
-const decrement = (by = 1) => counterPouch.set((prev) => prev - by);
-const reset = () => counterPouch.set(0);
-const setCount = (value: number) => counterPouch.set(value);
+import { counterPouch, increment, decrement, reset, setCount } from '../stores/counterStore';
 
-// 📖 Get current value
-console.log(counterPouch.get()); // 0
-
-// 🚀 Use the actions
-increment(); // count becomes 1 ⬆️
-increment(); // count becomes 2 ⬆️
-decrement(); // count becomes 1 ⬇️
-console.log(counterPouch.get()); // 1
-```
-
-### 👂 Subscribe to Changes
-
-```typescript
-// 👂 Subscribe to changes - automatic cleanup included
-const unsubscribe = counterPouch.subscribe(() => {
-  console.log(`🔔 Counter changed to ${counterPouch.get()}`);
-});
-
-// 🧪 Test the subscription
-increment(); // Console: "🔔 Counter changed to 2"
-reset(); // Console: "🔔 Counter changed to 0"
-
-// 🧽 Cleanup is automatic, but you can unsubscribe manually
-unsubscribe();
-```
-
-### ⚛️ Use in React Components
-
-```typescript
-// ⚛️ No providers needed! Just use the pouch directly
 function Counter() {
-  const count = counterPouch.use(); // ✨ Magic happens here
+  const count = counterPouch.use(); // ✨ Auto-updates component on state change
 
   return (
     <div>
@@ -139,10 +117,72 @@ function Counter() {
   );
 }
 
-// Or create a custom hook for better organization
-function useCounter() {
-  const count = counterPouch.use();
+export default Counter;
+```
 
+### 🎯 Step 3: Use Anywhere in Your App
+
+**`src/App.tsx`**
+```typescript
+import { counterPouch, increment } from './stores/counterStore';
+import Counter from './components/Counter';
+
+function App() {
+  // 📖 Access state directly - no providers needed!
+  console.log('Current count:', counterPouch.get());
+  
+  // 🚀 Trigger actions from anywhere
+  const handleGlobalIncrement = () => increment(5);
+
+  return (
+    <div>
+      <h1>🎒 React Pouch Demo</h1>
+      <Counter />
+      <button onClick={handleGlobalIncrement}>
+        🚀 Global +5
+      </button>
+    </div>
+  );
+}
+
+export default App;
+```
+
+### 👂 Optional: Subscribe to Changes
+
+**`src/utils/logger.ts`**
+```typescript
+import { counterPouch } from '../stores/counterStore';
+
+// 👂 Subscribe to changes from anywhere - automatic cleanup included
+const unsubscribe = counterPouch.subscribe(() => {
+  console.log(`🔔 Counter changed to ${counterPouch.get()}`);
+});
+
+// 🧽 Cleanup when needed (optional - React handles this automatically)
+// unsubscribe();
+```
+
+### 🎯 Pro Tip: Custom Hooks for Better Organization
+
+Create reusable hooks in your store file:
+
+**`src/stores/counterStore.ts`** (updated)
+```typescript
+import { pouch } from "react-pouch";
+
+export const counterPouch = pouch(0);
+
+// Actions
+export const increment = (by = 1) => counterPouch.set((prev) => prev + by);
+export const decrement = (by = 1) => counterPouch.set((prev) => prev - by);
+export const reset = () => counterPouch.set(0);
+export const setCount = (value: number) => counterPouch.set(value);
+
+// 🎯 Custom hook for complete counter functionality
+export function useCounter() {
+  const count = counterPouch.use();
+  
   return {
     count,
     increment,
@@ -151,18 +191,22 @@ function useCounter() {
     setCount,
   };
 }
+```
 
-// Use the custom hook
+**`src/components/CounterWithHook.tsx`**
+```typescript
+import { useCounter } from '../stores/counterStore';
+
 function CounterWithHook() {
   const { count, increment, decrement, reset } = useCounter();
 
   return (
     <div>
-      <h2>Counter: {count}</h2>
+      <h2>🔢 Counter: {count}</h2>
       <div>
-        <button onClick={increment}>+</button>
-        <button onClick={decrement}>-</button>
-        <button onClick={reset}>Reset</button>
+        <button onClick={increment}>➕</button>
+        <button onClick={decrement}>➖</button>
+        <button onClick={reset}>🔄 Reset</button>
       </div>
     </div>
   );
@@ -1452,10 +1496,12 @@ console.log(textStore.get()); // "HELLO WORLD"
 
 ### 📝 Form with Validation, Persistence, and History
 
+**`src/stores/formStore.ts`**
 ```typescript
 import { store, validate, persist, history, logger } from "react-pouch";
 
-const formStore = store({ name: "", email: "", age: 0 }, [
+// Create form store with multiple plugins
+export const formStore = store({ name: "", email: "", age: 0 }, [
   validate((data) => {
     if (!data.name) return { isValid: false, error: "Name is required" };
     if (!data.email.includes("@"))
@@ -1463,12 +1509,53 @@ const formStore = store({ name: "", email: "", age: 0 }, [
     if (data.age < 0) return { isValid: false, error: "Age must be positive" };
     return { isValid: true };
   }),
-  persist("user-form"),
-  history(10),
-  logger("FormStore"),
+  persist("user-form"),      // Auto-save to localStorage
+  history(10),              // Undo/redo support
+  logger("FormStore"),      // Debug logging
 ]);
 
-// Form with validation, auto-save, undo/redo, and debugging
+// Export actions
+export const updateName = (name: string) => 
+  formStore.set(prev => ({ ...prev, name }));
+export const updateEmail = (email: string) => 
+  formStore.set(prev => ({ ...prev, email }));
+export const updateAge = (age: number) => 
+  formStore.set(prev => ({ ...prev, age }));
+export const resetForm = () => 
+  formStore.set({ name: "", email: "", age: 0 });
+```
+
+**`src/components/UserForm.tsx`**
+```typescript
+import { formStore, updateName, updateEmail, updateAge, resetForm } from '../stores/formStore';
+
+function UserForm() {
+  const form = formStore.use();
+
+  return (
+    <form>
+      <input 
+        value={form.name} 
+        onChange={(e) => updateName(e.target.value)}
+        placeholder="Name" 
+      />
+      <input 
+        value={form.email} 
+        onChange={(e) => updateEmail(e.target.value)}
+        placeholder="Email" 
+      />
+      <input 
+        type="number"
+        value={form.age} 
+        onChange={(e) => updateAge(Number(e.target.value))}
+        placeholder="Age" 
+      />
+      <button type="button" onClick={resetForm}>Reset</button>
+      <button type="button" onClick={formStore.undo}>↶ Undo</button>
+      <button type="button" onClick={formStore.redo}>↷ Redo</button>
+    </form>
+  );
+}
 ```
 
 ### 💪 Real-time Sync with Debouncing and Encryption
