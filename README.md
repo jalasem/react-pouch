@@ -213,6 +213,60 @@ function CounterWithHook() {
 }
 ```
 
+## 🔮 TypeScript IntelliSense for Plugin Methods
+
+**Want to see plugin methods like `undo()`, `redo()`, `computed()` in your IDE?** Here are two ways to get perfect TypeScript IntelliSense:
+
+### ✨ Option 1: Use `as const` (Recommended)
+
+```typescript
+// ✅ Add `as const` to get plugin methods in IntelliSense
+export const counter = pouch(0, [history(5)] as const);
+
+// Now you get all these methods with perfect TypeScript support:
+counter.undo();     // ✅ Available from history plugin
+counter.redo();     // ✅ Available from history plugin  
+counter.canUndo();  // ✅ Available from history plugin
+counter.canRedo();  // ✅ Available from history plugin
+```
+
+### 🚀 Option 2: Use `withPlugins` Helper
+
+```typescript
+import { withPlugins, history, computed } from 'react-pouch';
+
+// ✅ Automatic TypeScript inference - no `as const` needed!
+export const counter = withPlugins(0, [history(5)]);
+export const calculator = withPlugins(10, [
+  history(3),
+  computed((x: number) => x * 2)
+]);
+
+// Perfect IntelliSense for all plugin methods:
+counter.undo();           // From history
+calculator.computed();    // From computed
+```
+
+### 🎯 Multiple Plugins Example
+
+```typescript
+export const formStore = pouch({
+  name: '', 
+  email: '', 
+  age: 0 
+}, [
+  history(10),
+  persist('user-form'),
+  computed((data) => data.name.length + data.email.length)
+] as const);
+
+// All these methods are now available with TypeScript IntelliSense:
+formStore.undo();        // From history plugin
+formStore.redo();        // From history plugin
+formStore.computed();    // From computed plugin
+// Plus all the standard methods: get(), set(), subscribe(), use()
+```
+
 ## 🎯 Core API - Stupidly Simple
 
 ### `pouch(initialValue, plugins?)`

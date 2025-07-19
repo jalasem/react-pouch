@@ -89,7 +89,7 @@ export function pouch<T>(
   return new PouchImpl(initialValue, plugins || []);
 }
 
-// Keep store as an alias for backward compatibility with additional overload for explicit types
+// Keep store as an alias for backward compatibility with plugin inference
 export function store<T>(initialValue: T): PouchType<T>;
 export function store<T>(initialValue: T, plugins: Plugin<T, any>[]): PouchType<T>;
 export function store<T, TPlugins extends readonly Plugin<T, any>[]>(
@@ -101,6 +101,14 @@ export function store<T>(
   plugins?: Plugin<T, any>[]
 ): any {
   return pouch(initialValue, plugins || []);
+}
+
+// Helper function for better plugin inference
+export function withPlugins<T, TPlugins extends readonly Plugin<T, any>[]>(
+  initialValue: T,
+  plugins: TPlugins
+): PouchWithPlugins<T, TPlugins> {
+  return pouch(initialValue, plugins);
 }
 
 export function usePouch<T>(pouchInstance: PouchType<T>): T {

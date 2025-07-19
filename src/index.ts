@@ -1,4 +1,4 @@
-export { pouch, usePouch, store, useStore } from "./core/store";
+export { pouch, usePouch, store, useStore, withPlugins } from "./core/store";
 export type { Pouch, Store, Plugin, PluginHooks, SimplePlugin } from "./core/types";
 
 // Export all plugins
