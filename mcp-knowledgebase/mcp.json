@@ -1,0 +1,55 @@
+{
+  "name": "react-pouch-knowledgebase",
+  "version": "1.0.0",
+  "description": "MCP knowledgebase for React Pouch - A lightweight, plugin-based state management library",
+  "metadata": {
+    "library": "react-pouch",
+    "npm": "react-pouch",
+    "github": "https://github.com/yourusername/react-pouch",
+    "documentation": "https://react-pouch.dev"
+  },
+  "capabilities": {
+    "core": {
+      "description": "Core state management functionality",
+      "features": [
+        "Factory pattern for creating pouch instances",
+        "Observer pattern for state change notifications",
+        "Plugin system with three-phase lifecycle",
+        "Full TypeScript support with generics",
+        "React and React Native integration"
+      ]
+    },
+    "plugins": {
+      "description": "Built-in plugin ecosystem",
+      "available": [
+        "analytics",
+        "computed",
+        "debounce",
+        "encrypt",
+        "history",
+        "logger",
+        "middleware",
+        "persist",
+        "rnPersist",
+        "schema",
+        "sync",
+        "throttle",
+        "validate"
+      ]
+    }
+  },
+  "api_reference": "./api/",
+  "plugin_documentation": "./plugins/",
+  "examples": "./examples/",
+  "types": "./types/",
+  "keywords": [
+    "react",
+    "state-management",
+    "typescript",
+    "plugins",
+    "lightweight",
+    "react-native",
+    "observable",
+    "hooks"
+  ]
+}
